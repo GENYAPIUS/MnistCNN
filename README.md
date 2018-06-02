@@ -2,9 +2,9 @@
 
 ## 環境設定
 
-[下載 imagemagick](http://www.imagemagick.org/script/download.php)
-[下載 ffmpeg](https://www.ffmpeg.org/download.html)
-[下載並安裝 Anaconda](https://www.anaconda.com/download/)，選擇搭配 Python 3.6 的版本
+- [下載 imagemagick](http://www.imagemagick.org/script/download.php)
+- [下載 ffmpeg](https://www.ffmpeg.org/download.html)
+- [下載並安裝 Anaconda](https://www.anaconda.com/download/)，選擇搭配 Python 3.6 的版本
 
 
 ### Windows 環境
