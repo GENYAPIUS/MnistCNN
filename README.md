@@ -1,32 +1,67 @@
 # MnistCNN
-安裝Anaconda：https://www.anaconda.com/download/
 
-github內，image資料夾內圖片為我自己拍並處理為灰階的一張圖片。(?
+## 環境設定
 
-在一個自己爽就好的地方創目錄，使用cmd進入該目錄後輸入指令，myname為自訂名字：
+[下載並安裝 Anaconda](https://www.anaconda.com/download/)，選擇搭配 Python 3.6 的版本
+
+
+### Windows 環境
+
+如果是 Windows 使用者需要設定 conda 環境
+```cmd
 conda --name myname python=3.6 anaconda
-
-等他創建完成後輸入
 activate  myname
+```
 
-會變為
+提示符號會變成
+```cmd
 (myname) 當前路徑>
+```
 
-先更新pip
+
+### Linux 環境
+
+如果是非 Windows 使用者，安裝完成後會提示是否要將初始環境變數的指令加入 `~/.bashrc` ，如果不使用 bash 需字型調整下面指令
+```bash
+export PATH=/home/dd-han/anaconda3/bin:$PATH
+```
+
+加入後，需執行 `source ~/.bashrc` 或 `source ~/.zshrc` 啟用環境變數。
+
+完成後，執行以下指令確保 Python 從 Anaconda 來：
+
+```bash
+which python
+```
+
+### 共通步驟
+
+啟用 Anaconda 環境後，還需要設定 Anaconda 環境的 python 套件
+
+更新 pip
+
+```bash
+python -m pip install msgpack
 python -m pip install --upgrade pip
+```
 
-安裝tensorflow
-pip install tensorflow
+安裝套件
 
-安裝keras
-pip install keras
+```bash
+pip install tensorflow keras h5py
+```
 
-安裝h5py
-pip insyall h5py
+## Jupyter 使用說明
 
-要使用jupyter notebook開啟程式碼，輸入jupyter notebook就會開啟網頁；網頁開啟後點選mnistCNN.ipynb
+Jupyter 是一個方便的 GUI 工具可以進行 Python Debug 與開發。
 
-一格稱為一個Cell，Ctrl+Enter為執行該Cell。
+Repo 中， image 資料夾內圖片為 GENYAPIUS 並處理為灰階的一張圖片。(?
+
+要使用 jupyter notebook 開啟程式碼，輸入 `jupyter notebook` 就會開啟網頁
+
+網頁開啟後點選 `mnistCNN.ipynb`
+
+一格稱為一個 Cell，Ctrl+Enter為執行該Cell。
 
 第一個Cell為讀取模組。
 
@@ -47,4 +82,3 @@ data = data.reshape(1, 28, 28, 1)
 第四個Cell為在使用完第三個Cell後使用標準化的測驗資料進行預測。
 
 第五個Cell為以混淆矩陣顯示預測結果，橫排predict為預測值、直排label為實際值。
-
