@@ -36,20 +36,20 @@ chcp 65001
 
 ### Linux 環境
 
-非 Linux 可以透過套件管理程式安裝 `imagemagic` 與 `ffmpeg` 套件，指令如下
+非 Linux 可以透過套件管理程式安裝 `ffmpeg` 套件，指令如下
 
 ```bash
 # ArchLinux
-sudo pacman -Syu imagemagic ffmpeg
+sudo pacman -Syu ffmpeg
 
 # Debian / Ubuntu 與其他使用 apt 的 Linux
-sudo apt-get install imagemagic ffmpeg
+sudo apt-get install ffmpeg
 
 # Red Hat Entprise Linux / CentOS 與其他使用 yum 的 Linux
-sudo yum install imagemagic ffmpeg
+sudo yum install ffmpeg
 ```
 
-安裝後請確認可以在終端機可以輸入 `ffmpeg --version` 與 `magick --version` 可以正確顯示套件版本。
+安裝後請確認可以在終端機可以輸入 `ffmpeg --version` 可以正確顯示套件版本。
 
 Anaconda 安裝完成後會提示是否要將初始環境變數的指令加入 `~/.bashrc` ，如果不使用 bash 需將下面指令加入對應的環境檔案。
 ```bash
