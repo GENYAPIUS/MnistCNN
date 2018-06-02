@@ -2,6 +2,8 @@
 
 ## 環境設定
 
+[下載 imagemagick](http://www.imagemagick.org/script/download.php)
+[下載 ffmpeg](https://www.ffmpeg.org/download.html)
 [下載並安裝 Anaconda](https://www.anaconda.com/download/)，選擇搭配 Python 3.6 的版本
 
 
@@ -20,6 +22,21 @@ activate  myname
 
 
 ### Linux 環境
+
+非 Linux 可以透過套件管理程式安裝 `imagemagic` 與 `ffmpeg` 套件，指令如下
+
+```bash
+# ArchLinux
+sudo pacman -Syu imagemagic ffmpeg
+
+# Debian / Ubuntu 與其他使用 apt 的 Linux
+sudo apt-get install imagemagic ffmpeg
+
+# Red Hat Entprise Linux / CentOS 與其他使用 yum 的 Linux
+sudo yum install imagemagic ffmpeg
+```
+
+安裝後請確認可以在終端機可以輸入 `ffmpeg --version` 與 `magick --version` 可以正確顯示套件版本。
 
 如果是非 Windows 使用者，安裝完成後會提示是否要將初始環境變數的指令加入 `~/.bashrc` ，如果不使用 bash 需字型調整下面指令
 ```bash
