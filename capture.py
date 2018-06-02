@@ -5,9 +5,6 @@ from time import sleep
 from PIL import Image
 from io import StringIO
 
-platform = sys.platform
-ffmpeg_command = ["ffmpeg"]
-
 def save_image(tmp, image_binary):
   temp_image_file = os.path.join(tmp, "tmp.jpg")
   # print("temp file is : %s" % temp_image_file)
@@ -95,6 +92,9 @@ def set_crop(ffmpeg_command):
 ## main
 global tempDir
 tempDir = tempfile.mkdtemp()
+
+platform = sys.platform
+ffmpeg_command = ["ffmpeg"]
 
 ffmpeg_command += set_camera(platform)
 ffmpeg_command += ["-vframes", "1", "-f", "image2", "-"]
