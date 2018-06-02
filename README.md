@@ -19,5 +19,10 @@ pip install tensorflow
 安裝keras
 pip install keras
 
+安裝h5py
+pip insyall h5py
+
 要使用jupyter notebook開啟程式碼，輸入jupyter notebook就會開啟網頁；網頁開啟後點選mnistCNN.ipynb
+
+
 
