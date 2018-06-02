@@ -38,14 +38,14 @@ sudo yum install imagemagic ffmpeg
 
 安裝後請確認可以在終端機可以輸入 `ffmpeg --version` 與 `magick --version` 可以正確顯示套件版本。
 
-如果是非 Windows 使用者，安裝完成後會提示是否要將初始環境變數的指令加入 `~/.bashrc` ，如果不使用 bash 需字型調整下面指令
+Anaconda 安裝完成後會提示是否要將初始環境變數的指令加入 `~/.bashrc` ，如果不使用 bash 需將下面指令加入對應的環境檔案。
 ```bash
 export PATH=/home/dd-han/anaconda3/bin:$PATH
 ```
 
-加入後，需執行 `source ~/.bashrc` 或 `source ~/.zshrc` 啟用環境變數。
+手動或加入後，需執行 `source ~/.bashrc` 或 `source ~/.zshrc` 更新環境變數（或是關閉終端機重開）。
 
-完成後，執行以下指令確保 Python 從 Anaconda 來：
+更新後環境變數，執行以下指令確保 Python 從 Anaconda 而不是從系統來：
 
 ```bash
 which python
