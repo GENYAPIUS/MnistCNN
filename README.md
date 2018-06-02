@@ -118,6 +118,7 @@ data = data.reshape(1, 28, 28, 1)
 dd-han 表示他懶得寫註解，以下直接上 Sample
 ```python
 from capture import Capture
+import os
 
 def job(self, image_object):
   gray_file = os.path.join(self.temp_dir, "gray.jpg")
@@ -134,5 +135,5 @@ print(capture.ffmpeg_command)
 capture.set_crop()
 print(capture.crop)
 
-capture.timer(job, delay=0, count=None)
+capture.timer(job, delay_time=0, count=None)
 ```
