@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# coding: utf8
+# -*- encoding: utf-8 -*-
 import sys
 import subprocess
 from time import sleep
@@ -16,19 +16,29 @@ if platform == "linux":
   ffmpeg_command += ["-f", "v4l2", "-i", device]
   
 
-elif plaform == "windows":
-  subprocess.call(["ffmpeg", "-y", "-f", "vfwcap", "-i", " list"])
+elif platform == "win32":
+  subprocess.call(["ffmpeg", "-list_devices", "true", "-f", "dshow", "-i", "dummy"])
+  device = input("input video device name: ")
 
-elif plaform == "macos":
+  ffmpeg_command += [ "-f", "dshow", "-i", "video=%s" % device]
+
+elif platform == "macos":
   subprocess.call("ffmpeg", "-f", "avfoundation", "-list_devices","true","-i")
+
+  exit()
+else:
+  raise Exception("unknown platform")
 
 ffmpeg_command += ["-vframes", "1", "-f", "image2", "-"]
 
+adjusted = False
+
 while True:
+  print("ffmpeg command: " + " ".join(ffmpeg_command))
   res = subprocess.check_output(ffmpeg_command, stderr=subprocess.DEVNULL)
 
   saveFile = open("tmp.jpg", "wb")
   saveFile.write(res)
+  saveFile.close()
 
-  print("ffmpeg command: " + " ".join(ffmpeg_command))
   
