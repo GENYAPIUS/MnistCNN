@@ -2,16 +2,25 @@
 
 ## 環境設定
 
-- [下載 imagemagick](http://www.imagemagick.org/script/download.php)
 - [下載 ffmpeg](https://www.ffmpeg.org/download.html)
 - [下載並安裝 Anaconda](https://www.anaconda.com/download/)，選擇搭配 Python 3.6 的版本
 
 
 ### Windows 環境
 
-如果是 Windows 使用者需要設定 conda 環境
+Wndows 需下載 ffmpeg ，解壓縮到資料夾後，該資料夾加入 PATH
+
+加入 PATH 請參考下方步驟：
+- 在 `電腦` 或 `本機` 上點 `右鍵` 選擇 `內容`
+- 點開左邊的 `進階系統設定` ，展開 `進階` 分頁
+- 點擊 環境變數
+- 如果出現清單，將這次的路徑加入；如果沒出現清單請用 `;` 隔開原本的內容，將 ffmpeg 所在路徑附加上去
+
+安裝後請確認可以在終端機可以輸入 `ffmpeg -version` 可以正確顯示套件版本。
+
+Conda 環境初始化
 ```cmd
-conda --name myname python=3.6 anaconda
+conda env --name myname python=3.6 anaconda
 activate  myname
 ```
 
@@ -20,6 +29,10 @@ activate  myname
 (myname) 當前路徑>
 ```
 
+進入環境後，請輸入下面指令將 cmd 切換為 Unicode 編碼（不然亂碼等著你）
+```bash
+chcp 65001
+```
 
 ### Linux 環境
 
@@ -99,3 +112,27 @@ data = data.reshape(1, 28, 28, 1)
 第四個Cell為在使用完第三個Cell後使用標準化的測驗資料進行預測。
 
 第五個Cell為以混淆矩陣顯示預測結果，橫排predict為預測值、直排label為實際值。
+
+## capture 使用說明
+
+dd-han 表示他懶得寫註解，以下直接上 Sample
+```python
+from capture import Capture
+
+def job(self, image_object):
+  gray_file = os.path.join(self.temp_dir, "gray.jpg")
+  image_object.save(gray_file)
+  self.open_image(gray_file)
+
+capture = Capture()
+print(capture.platform)
+print(capture.temp_dir)
+
+capture.set_camera()
+print(capture.ffmpeg_command)
+
+capture.set_crop()
+print(capture.crop)
+
+capture.timer(job, delay=0, count=None)
+```

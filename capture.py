@@ -5,109 +5,133 @@ from time import sleep
 from PIL import Image
 from io import StringIO
 
-def save_image(tmp, image_binary):
-  temp_image_file = os.path.join(tmp, "tmp.jpg")
-  # print("temp file is : %s" % temp_image_file)
-  saveFile = open(temp_image_file, "wb")
-  saveFile.write(image_binary)
-  saveFile.close()
-  return temp_image_file
+class Capture:
+  ## assign after set_camera
+  ffmpeg_command = None
 
-def open_image(imgfile = None):
-  if platform == "linux":
-    subprocess.call(["xdg-open", imgfile])
-  elif platform == "win32":
-    subprocess.call(["cmd", "/c", "start",  "mspaint", imgfile])
+  ## assign after set_crop
+  crop = None
+  
+  ## init create
+  platform = None
+  temp_dir = None
 
-  return 
+  def __init__(self):
+    self.platform = sys.platform
+    self.temp_dir = tempfile.mkdtemp()
 
-def set_camera(platform):
-  if platform == "linux":
-    subprocess.call(["v4l2-ctl", "--list-devices"])
-    device = input("input video device (/dev/video0): ")
-    if device == "":
-      device = "/dev/video0"
-    # subprocess.call(["ffmpeg", "-f", "v4l2", "-list_formats", "all", "-i" , device])
-    return(["-f", "v4l2", "-i", device])
+  def string_to_int(self, string):
+    return (int)(string)
 
-  elif platform == "win32":
-    subprocess.call(["ffmpeg", "-list_devices", "true", "-f", "dshow", "-i", "dummy"])
-    device = input("input video device name: ")
-    if device == "":
-      device = "USB 視訊裝置"
+  def fetch_image(self):
+    return subprocess.check_output(self.ffmpeg_command, stderr=subprocess.DEVNULL)
+    # return subprocess.check_output(self.ffmpeg_command)
 
-    return([ "-f", "dshow", "-i", "video=%s" % device])
+  def open_image(self, imgfile):
+    if self.platform == "linux":
+      subprocess.call(["xdg-open", imgfile])
+    elif self.platform == "win32":
+      subprocess.call(["cmd", "/c", "start",  "mspaint", imgfile])
+    return 
 
-  elif platform == "macos":
-    subprocess.call("ffmpeg", "-f", "avfoundation", "-list_devices","true","-i")
-    raise Exception("no code")
+  def save_image(self, image_binary):
+    temp_image_file = os.path.join(self.temp_dir, "tmp.jpg")
+    # print("temp file is : %s" % temp_image_file)
+    saveFile = open(temp_image_file, "wb")
+    saveFile.write(image_binary)
+    saveFile.close()
+    return temp_image_file
 
-  else:
-    raise Exception("unknown platform")
+  def set_camera(self):
+    self.ffmpeg_command = ["ffmpeg"]
 
-def fetch_image(command):
-  return subprocess.check_output(command, stderr=subprocess.DEVNULL)
+    if self.platform == "linux":
+      subprocess.call(["v4l2-ctl", "--list-devices"])
+      device = input("input video device (/dev/video0): ")
+      if device == "":
+        device = "/dev/video0"
+      self.ffmpeg_command += ["-f", "v4l2", "-i", device]
 
-def string_to_int(string):
-  return (int)(string)
+    elif self.platform == "win32":
+      subprocess.call(["ffmpeg", "-list_devices", "true", "-f", "dshow", "-i", "dummy"])
+      device = input("input video device name: ")
+      if device == "":
+        device = "USB 視訊裝置"
 
-def set_crop(ffmpeg_command):
-  adjusted = False
-  adjust_crop = (0,0,0,0)
+      self.ffmpeg_command += [ "-f", "dshow", "-i", "video=%s" % device]
 
-  # print("ffmpeg command: " + " ".join(ffmpeg_command))
-  image_binary = fetch_image(ffmpeg_command)
-  image_file = save_image(tempDir, image_binary)
-  open_image(image_file)
+    elif self.platform == "macos":
+      subprocess.call("ffmpeg", "-f", "avfoundation", "-list_devices","true","-i")
+      raise Exception("no code")
 
-  while adjusted == False:
-    img = Image.open(image_file)
+    else:
+      raise Exception("unknown platform")
 
-    adjust_position_input = input("input crop start position (x, y): ")
-    adjust_position = tuple(map(string_to_int, adjust_position_input.split(",")))
+    self.ffmpeg_command += ["-vframes", "1", "-f", "image2", "-"]
+    return self.ffmpeg_command
 
-    print("max crop size: %d, %d" % tuple(map(lambda x, y: x - y, img.size, adjust_position)))
-    adjust_size_input = input("input crop size (width, height): ")
-    try:
-      adjust_size = tuple(map(string_to_int, adjust_size_input.split(",")))
-    except:
-      print("wrong input, retry")
-      continue
+  def set_crop(self):
+    self.crop = (0,0,0,0)
 
-    adjust_crop = adjust_position + adjust_size
-    print("preview crop: left %d, up %d, righ %d, down %d" % adjust_crop)
+    # print("ffmpeg command: " + " ".join(ffmpeg_command))
+    image_binary = self.fetch_image()
+    image_file = self.save_image(image_binary)
+    self.open_image(image_file)
 
-    with img.crop(adjust_crop) as croped_image:
-      # print(croped_image)
-      croped_file = os.path.join(tempDir, "croped.jpg")
-      croped_image.save(croped_file)
-      open_image(croped_file)
-    
-    adjusted = True if input("preview OK (y/N): ").upper() == "Y" else False
+    while True:
+      img = Image.open(image_file)
 
-  print("crop adjust done")
-  return adjust_crop
+      adjust_position_input = input("input crop start position (x, y): ")
+      try:
+        adjust_position = tuple(map(self.string_to_int, adjust_position_input.split(",")))
+      except:
+        print("wrong position, retry")
+        continue
 
+      print("max crop size: %d, %d" % tuple(map(lambda x, y: x - y, img.size, adjust_position)))
+      adjust_size_input = input("input crop size (width, height): ")
+      try:
+        adjust_size = tuple(map(self.string_to_int, adjust_size_input.split(",")))
+      except:
+        print("wrong size, retry")
+        continue
 
-## main
-global tempDir
-tempDir = tempfile.mkdtemp()
+      self.crop = adjust_position + adjust_size
+      print("preview crop: left %d, up %d, righ %d, down %d" % self.crop)
 
-platform = sys.platform
-ffmpeg_command = ["ffmpeg"]
+      with img.crop(self.crop) as croped_image:
+        try:
+          # print(croped_image)
+          croped_file = os.path.join(self.temp_dir, "croped.jpg")
+          croped_image.save(croped_file)
+        except:
+          print("wrong size, rety")
+          continue
+        self.open_image(croped_file)
+      
+      if input("preview OK (y/N): ").upper() == "Y":
+        break
 
-ffmpeg_command += set_camera(platform)
-ffmpeg_command += ["-vframes", "1", "-f", "image2", "-"]
+    return self.crop
+  
+  def timer(self, task, delay_time = 0, count = None):    
+    if self.ffmpeg_command == None:
+      raise Exception("camera not set")
 
-adjust_crop = set_crop(ffmpeg_command)
+    if self.crop == None:
+      raise Exception("no crop set")
 
-while True:
-  image_binary = fetch_image(ffmpeg_command)
-  image_file = save_image(tempDir, image_binary)
+    current_count = 0
+    while True:
+      image_binary = self.fetch_image()
+      image_file = self.save_image(image_binary)
 
-  with Image.open(image_file) as img:
-    with img.crop(adjust_crop) as croped_image:
-      with croped_image.convert(mode="L") as grayscaled_image:
-        gray_file = os.path.join(tempDir, "gray.jpg")
-        grayscaled_image.save(gray_file)
-        open_image(gray_file)
+      with Image.open(image_file) as img:
+        with img.crop(self.crop) as croped_image:
+          with croped_image.convert(mode="L") as grayscaled_image:
+            task(self, grayscaled_image)
+            current_count += 1
+            if count != None and current_count >= count:
+              break
+            if (delay_time > 0):
+              sleep(delay_time)
