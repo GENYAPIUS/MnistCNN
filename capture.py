@@ -9,8 +9,10 @@ class Capture:
   ## assign after set_camera
   ffmpeg_command = None
 
+  size = (28,28)
   ## assign after set_crop
   crop = None
+  count = 0
   
   ## init create
   platform = None
@@ -56,7 +58,7 @@ class Capture:
       subprocess.call(["ffmpeg", "-list_devices", "true", "-f", "dshow", "-i", "dummy"])
       device = input("input video device name: ")
       if device == "":
-        device = "USB 視訊裝置"
+        device = "Logitech HD Webcam C310"
 
       self.ffmpeg_command += [ "-f", "dshow", "-i", "video=%s" % device]
 
@@ -81,38 +83,56 @@ class Capture:
     while True:
       img = Image.open(image_file)
 
-      adjust_position_input = input("input crop start position (x, y): ")
+      adjust_position_input = input("input crop right up position (right, up): ")
       try:
         adjust_position = tuple(map(self.string_to_int, adjust_position_input.split(",")))
       except:
         print("wrong position, retry")
         continue
 
-      print("max crop size: %d, %d" % tuple(map(lambda x, y: x - y, img.size, adjust_position)))
-      adjust_size_input = input("input crop size (width, height): ")
+      adjust_size_input = input("input crop left down position (left, down): ")
       try:
         adjust_size = tuple(map(self.string_to_int, adjust_size_input.split(",")))
       except:
-        print("wrong size, retry")
+        print("wrong position, retry")
         continue
 
       self.crop = adjust_position + adjust_size
-      print("preview crop: left %d, up %d, righ %d, down %d" % self.crop)
+      print("preview crop: left %d, up %d, right %d, down %d" % self.crop)
 
       with img.crop(self.crop) as croped_image:
-        try:
-          # print(croped_image)
+        if True:
+        # try:
+          print(croped_image)
           croped_file = os.path.join(self.temp_dir, "croped.jpg")
           croped_image.save(croped_file)
-        except:
-          print("wrong size, rety")
-          continue
+        # except:
+        #   print("wrong size, retry")
+        #   continue
         self.open_image(croped_file)
       
       if input("preview OK (y/N): ").upper() == "Y":
         break
 
     return self.crop
+
+  def shot(self):
+    if self.ffmpeg_command == None:
+      raise Exception("camera not set")
+
+    if self.crop == None:
+      raise Exception("no crop set")
+
+    image_binary = self.fetch_image()
+    image_file = self.save_image(image_binary)
+
+    with Image.open(image_file) as img:
+      with img.crop(self.crop).resize(self.size) as croped_image:
+        with croped_image.convert(mode="L") as grayscaled_image:
+          grayfile = "shot_%d.jpg" % self.count
+          grayscaled_image.save(grayfile)
+          self.count += 1
+          return grayfile
   
   def timer(self, task, delay_time = 0, count = None):    
     if self.ffmpeg_command == None:

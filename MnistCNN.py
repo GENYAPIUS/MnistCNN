@@ -1,35 +1,46 @@
-from keras.datasets import mnist
-from keras.utils import np_utils
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
+import os
 import numpy as np
-np.random.seed(10)
+import pandas as pd
 
-(x_Train, y_Train), (x_Test, y_Test) = mnist.load_data()
-x_Train4D = x_Train.reshape(x_Train.shape[0], 28, 28, 1).astype('float32')
-x_Test4D = x_Test.reshape(x_Test.shape[0], 28, 28, 1).astype('float32')
-
-x_Train4D_normalize = x_Train4D / 255
-x_Test4D_normalize = x_Test4D / 255
-
-y_TrainOneHot = np_utils.to_categorical(y_Train)
-y_TestOneHot = np_utils.to_categorical(y_Test)
-
-from keras.models import Sequential
+from keras.models import Sequential, load_model 
 from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
+from keras.utils import np_utils
 
-model = Sequential()
+from PIL import Image
+from capture import Capture
 
-model.add(Conv2D(filters=16, kernel_size=(5, 5), padding='same',
-                 input_shape=(28, 28, 1), activation='relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Conv2D(filters=36, kernel_size=(5, 5),
-                 padding='same', activation='relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Dropout(0.25))
-model.add(Flatten())
-model.add(Dense(128, activation='relu'))
-model.add(Dropout(0.5))
-model.add(Dense(10, activation='softmax'))
+# 從 HDF5 檔案中載入模型
+model = load_model("mnistCNN.h5")
 
-
-
+#顯示模型
 print(model.summary())
+
+## 初始化 capture 物件
+capture = Capture()
+
+capture.set_camera()
+capture.set_crop()
+
+while True:
+    img_file = capture.shot()
+    print("image file: %s" % img_file)
+
+    x_Test = np.empty((1, 1, 28, 28), dtype="float32")
+
+    with Image.open(img_file) as img:
+        arr = np.asarray(img, dtype="float32")
+        x_Test[0, :, :, :] = arr
+        x_Test = x_Test.reshape(1, 28, 28, 1)
+
+        x_Test4D = x_Test.reshape(x_Test.shape[0], 28, 28, 1).astype('float32')
+
+        x_Test4D_normalize = x_Test4D / 255
+
+        prediction = model.predict_classes(x_Test4D_normalize)
+
+        print(prediction[0])
+
+        if input("Continue prediction (Y/n) ?").upper() == "N":
+            break
