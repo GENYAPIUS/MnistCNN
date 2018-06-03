@@ -21,26 +21,29 @@ print(model.summary())
 capture = Capture()
 
 capture.set_camera()
-capture.set_crop()
-
 while True:
-    img_file = capture.shot()
-    print("image file: %s" % img_file)
+    capture.set_crop()
 
-    x_Test = np.empty((1, 1, 28, 28), dtype="float32")
+    while True:
+        img_file = capture.shot()
+        print("image file: %s" % img_file)
 
-    with Image.open(img_file) as img:
-        arr = np.asarray(img, dtype="float32")
-        x_Test[0, :, :, :] = arr
-        x_Test = x_Test.reshape(1, 28, 28, 1)
+        x_Test = np.empty((1, 1, 28, 28), dtype="float32")
 
-        x_Test4D = x_Test.reshape(x_Test.shape[0], 28, 28, 1).astype('float32')
+        with Image.open(img_file) as img:
+            arr = np.asarray(img, dtype="float32")
+            x_Test[0, :, :, :] = arr
+            x_Test = x_Test.reshape(1, 28, 28, 1)
 
-        x_Test4D_normalize = x_Test4D / 255
+            x_Test4D = x_Test.reshape(x_Test.shape[0], 28, 28, 1).astype('float32')
 
-        prediction = model.predict_classes(x_Test4D_normalize)
+            x_Test4D_normalize = x_Test4D / 255
 
-        print(prediction[0])
+            prediction = model.predict_classes(x_Test4D_normalize)
 
-        if input("Continue prediction (Y/n) ?").upper() == "N":
-            break
+            print(prediction[0])
+
+            if input("Continue prediction (Y/n) ?").upper() == "N":
+                break
+if input("reCaptrue (Y/n)?").upper() == "N":
+    break

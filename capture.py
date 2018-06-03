@@ -83,14 +83,14 @@ class Capture:
     while True:
       img = Image.open(image_file)
 
-      adjust_position_input = input("input crop right up position (right, up): ")
+      adjust_position_input = input("input crop right up position (left, up): ")
       try:
         adjust_position = tuple(map(self.string_to_int, adjust_position_input.split(",")))
       except:
         print("wrong position, retry")
         continue
 
-      adjust_size_input = input("input crop left down position (left, down): ")
+      adjust_size_input = input("input crop left down position (right, down): ")
       try:
         adjust_size = tuple(map(self.string_to_int, adjust_size_input.split(",")))
       except:
