@@ -28,10 +28,10 @@ while True:
         img_file = capture.shot()
         print("image file: %s" % img_file)
 
-        x_Test = np.empty((1, 1, 28, 28), dtype="float32")
+        x_Test = np.empty((1, 1, 28, 28), dtype="float64")
 
         with Image.open(img_file) as img:
-            arr = np.asarray(img, dtype="float32")
+            arr = np.asarray(img, dtype="float64")
             x_Test[0, :, :, :] = arr
             x_Test = x_Test.reshape(1, 28, 28, 1)
 
@@ -45,5 +45,5 @@ while True:
 
             if input("Continue prediction (Y/n) ?").upper() == "N":
                 break
-if input("reCaptrue (Y/n)?").upper() == "N":
-    break
+    if input("ReCapture (Y/n)?").upper() == "N":
+        break
