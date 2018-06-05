@@ -58,7 +58,7 @@ class Capture:
       subprocess.call(["ffmpeg", "-list_devices", "true", "-f", "dshow", "-i", "dummy"])
       device = input("input video device name: ")
       if device == "":
-        device = "Logitech HD Webcam C310"
+        device = "DroidCam Source 3"
 
       self.ffmpeg_command += [ "-f", "dshow", "-i", "video=%s" % device]
 
