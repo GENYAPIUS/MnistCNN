@@ -2,7 +2,6 @@
 # -*- encoding: utf-8 -*-
 import os
 import numpy as np
-import pandas as pd
 
 from keras.models import Sequential, load_model 
 from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
