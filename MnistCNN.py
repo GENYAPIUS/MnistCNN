@@ -34,7 +34,7 @@ while True:
             x_Test[0, :, :, :] = arr
             x_Test = x_Test.reshape(1, 28, 28, 1)
 
-            x_Test4D = x_Test.reshape(x_Test.shape[0], 28, 28, 1).astype('float32')
+            x_Test4D = x_Test.reshape(x_Test.shape[0], 28, 28, 1).astype('float64')
 
             x_Test4D_normalize = x_Test4D / 255
 
